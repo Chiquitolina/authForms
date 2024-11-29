@@ -1,0 +1,24 @@
+.log-in-btn {
+  border-radius: 3rem;
+  padding: 0.75rem;
+  width: 6rem;
+  font-family: "Lato", Arial, sans-serif;
+}
+
+input {
+  border-radius: 3rem;
+}
+
+.icon:hover {
+  color: black;
+}
+
+.success-icon {
+  opacity: 0; /* Inicialmente invisible */
+  transition: opacity 3s ease-in-out; /* Transición suave */
+}
+
+.success-icon.fade-in {
+  opacity: 1; /* Se vuelve visible cuando tiene la clase fade-in */
+  transition-delay: 3s; /* Retardo de 0.3 segundos para el fade-in */
+}

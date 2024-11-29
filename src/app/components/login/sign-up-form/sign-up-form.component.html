@@ -1,0 +1,159 @@
+<div class="d-flex flex-column justify-content-center align-items-center w-100">
+  <form [formGroup]="signUpForm" class="w-75 mt-3">
+    <mat-form-field class="w-100 mw-100">
+      <mat-label>Email</mat-label>
+      <input formControlName="email" class="mw-100" matInput />
+      <div matSuffix class="m-2 mt-4 icons-container">
+        <mat-icon>mail</mat-icon>
+        @if (signUpForm.get('email')?.valid && (signUpForm.get('email')?.dirty
+        || signUpForm.get('email')?.touched)) {
+        <mat-icon class="success-icon" style="color: green"
+          >check_circle</mat-icon
+        >
+        }
+      </div>
+      @if (signUpForm.get('email')?.hasError('email') &&
+      !signUpForm.get('email')?.hasError('required')) {
+      <mat-error>Please enter a valid email address</mat-error>
+      } @if (signUpForm.get('email')?.hasError('required')) {
+      <mat-error>Email is <strong>required</strong></mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field class="w-100 mw-100">
+      <mat-label>Full Name</mat-label>
+      <input formControlName="fullname" matInput />
+      <div matSuffix class="m-2 mt-4 icons-container">
+        <mat-icon>person</mat-icon>
+        @if (signUpForm.get('fullname')?.valid &&
+        (signUpForm.get('fullname')?.dirty ||
+        signUpForm.get('fullname')?.touched)) {
+        <mat-icon class="success-icon" style="color: green"
+          >check_circle</mat-icon
+        >
+        }
+      </div>
+      @if (signUpForm.get('fullname')?.hasError('required')) {
+      <mat-error>Full name is <strong>required</strong></mat-error>
+      } @if (signUpForm.get('fullname')?.hasError('minlength')) {
+      <mat-error
+        >Full name must have at least <strong>2 characters</strong>.</mat-error
+      >
+      }
+    </mat-form-field>
+    <mat-form-field class="w-100 mw-100">
+      <mat-label>Password</mat-label>
+      <input
+        formControlName="password"
+        [type]="hide ? 'password' : 'text'"
+        matInput
+      />
+      <div matSuffix class="m-2 mt-4 icons-container">
+        <mat-icon class="icon" matSuffix (click)="hide = !hide">{{
+          hide ? "visibility_off" : "visibility"
+        }}</mat-icon>
+        @if (signUpForm.get('password')?.valid &&
+        (signUpForm.get('password')?.dirty ||
+        signUpForm.get('password')?.touched)) {
+        <mat-icon class="success-icon" style="color: green"
+          >check_circle</mat-icon
+        >
+        }
+      </div>
+      @if (signUpForm.get('password')?.hasError('required')) {
+      <mat-error>Password is <strong>required</strong></mat-error>
+      } @if (signUpForm.get('password')?.hasError('minlength')) {
+      <mat-error>
+        Password must have at least
+        <strong>8 characters</strong>.
+      </mat-error>
+      } @if (signUpForm.get('password')?.hasError('noUppercase')) {
+      <mat-error
+        >Password must include at least
+        <strong>one uppercase letter</strong>.</mat-error
+      >
+      } @if (signUpForm.get('password')?.hasError('noNumber')) {
+      <mat-error
+        >Password must include at least <strong>one number</strong>.</mat-error
+      >
+      } @if (signUpForm.get('password')?.hasError('noSpecial')) {
+      <mat-error
+        >Password must include at least
+        <strong>one special character</strong>.</mat-error
+      >
+      }
+    </mat-form-field>
+    <mat-form-field class="w-100 mw-100">
+      <mat-label>Repeat password</mat-label>
+      <input
+        formControlName="repeatpassword"
+        [type]="hide ? 'password' : 'text'"
+        matInput
+      />
+      <div matSuffix class="m-2 mt-4 icons-container">
+        <mat-icon class="icon" matSuffix (click)="hide = !hide">{{
+          hide ? "visibility_off" : "visibility"
+        }}</mat-icon>
+        @if (signUpForm.get('repeatpassword')?.valid &&
+        signUpForm.get('password')?.valid &&
+        (signUpForm.get('repeatpassword')?.dirty ||
+        signUpForm.get('repeatpassword')?.touched)) {
+        <mat-icon class="success-icon" style="color: green"
+          >check_circle</mat-icon
+        >
+        }
+      </div>
+      @if (signUpForm.get('repeatpassword')?.hasError('required')) {
+      <mat-error>Password is <strong>required</strong></mat-error>
+      } @else if (signUpForm.get('repeatpassword')?.hasError('matching')) {
+      <mat-error>Passwords do not match</mat-error>
+      }
+    </mat-form-field>
+    <div class="flex flex-column align-items-center">
+      <div class="mb-1">Authenticate Your Account</div>
+      <span class="text-color-secondary block">
+        Please enter the code sent to your email.
+      </span>
+      <div
+        class="d-flex flex-column align-items-center justify-content-center mb-4"
+      >
+        <div class="d-flex align-items-center">
+          <p-inputOtp formControlName="code" [disabled]="!codeSent" />
+          @if (signUpForm.get('code')?.valid && (signUpForm.get('code')?.dirty
+          || signUpForm.get('code')?.touched)) {
+          <mat-icon
+            class="success-icon"
+            style="color: green; margin-left: 0.5rem"
+            >check_circle</mat-icon
+          >
+          }
+        </div>
+        @if (signUpForm.get('code')?.hasError('required')) {
+        <mat-error>Verification code is <strong>required</strong></mat-error>
+        } @if (signUpForm.get('code')?.hasError('nonNumeric') && (codeSent ||
+        signUpForm.get('code')?.value != '----')) {
+        <mat-error
+          >Verification code must be a <strong>number</strong>.</mat-error
+        >
+        } @if (signUpForm.get('code')?.hasError('minlength') &&
+        !signUpForm.get('code')?.hasError('nonNumeric')) {
+        <mat-error
+          >Verification code must have <strong>4 characters</strong>.</mat-error
+        >
+        } @if (showVerifyError) {
+        <mat-error>You must verify your email.</mat-error>
+        }
+        <button
+          (click)="sendCode($event)"
+          class="log-in-btn w-75 mt-2"
+          mat-raised-button
+          [disabled]="codeBtnDisabled"
+        >
+          {{ codeBtnLabel }}
+        </button>
+      </div>
+    </div>
+    <button class="log-in-btn w-100 mb-3" (click)="signUp()" mat-raised-button>
+      Sign up
+    </button>
+  </form>
+</div>
