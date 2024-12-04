@@ -146,7 +146,7 @@
           (click)="sendCode($event)"
           class="log-in-btn w-75 mt-2"
           mat-raised-button
-          [disabled]="codeBtnDisabled"
+          [disabled]="codeBtnDisabled || !signUpForm.get('email')?.valid"
         >
           {{ codeBtnLabel }}
         </button>
