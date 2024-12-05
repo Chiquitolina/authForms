@@ -41,5 +41,12 @@ h1 {
 }
 
 .hidden-tab .mat-tab-label {
-    display: none !important;
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+  .card {
+    min-height: 80vh;
+    display: flex;
   }
+}

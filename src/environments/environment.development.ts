@@ -1,5 +1,5 @@
 export const environment = {
-    production: true,
-    apiUrl: 'https://api.example.com',
-    apiKey: 'prod-api-key',
+    production: false,
+    apiUrl: 'http://localhost:3000',
+    apiKey: 'dev-api-key',
 };

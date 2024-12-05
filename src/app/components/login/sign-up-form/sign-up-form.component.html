@@ -1,4 +1,5 @@
 <div class="d-flex flex-column justify-content-center align-items-center w-100">
+  <p-toast />
   <form [formGroup]="signUpForm" class="w-75 mt-3">
     <mat-form-field class="w-100 mw-100">
       <mat-label>Email</mat-label>
@@ -21,20 +22,20 @@
     </mat-form-field>
     <mat-form-field class="w-100 mw-100">
       <mat-label>Full Name</mat-label>
-      <input formControlName="fullname" matInput />
+      <input formControlName="full_name" matInput />
       <div matSuffix class="m-2 mt-4 icons-container">
         <mat-icon>person</mat-icon>
-        @if (signUpForm.get('fullname')?.valid &&
-        (signUpForm.get('fullname')?.dirty ||
-        signUpForm.get('fullname')?.touched)) {
+        @if (signUpForm.get('full_name')?.valid &&
+        (signUpForm.get('full_name')?.dirty ||
+        signUpForm.get('full_name')?.touched)) {
         <mat-icon class="success-icon" style="color: green"
           >check_circle</mat-icon
         >
         }
       </div>
-      @if (signUpForm.get('fullname')?.hasError('required')) {
+      @if (signUpForm.get('full_name')?.hasError('required')) {
       <mat-error>Full name is <strong>required</strong></mat-error>
-      } @if (signUpForm.get('fullname')?.hasError('minlength')) {
+      } @if (signUpForm.get('full_name')?.hasError('minlength')) {
       <mat-error
         >Full name must have at least <strong>2 characters</strong>.</mat-error
       >
@@ -85,7 +86,7 @@
     <mat-form-field class="w-100 mw-100">
       <mat-label>Repeat password</mat-label>
       <input
-        formControlName="repeatpassword"
+        formControlName="confirmPassword"
         [type]="hide ? 'password' : 'text'"
         matInput
       />
@@ -93,18 +94,18 @@
         <mat-icon class="icon" matSuffix (click)="hide = !hide">{{
           hide ? "visibility_off" : "visibility"
         }}</mat-icon>
-        @if (signUpForm.get('repeatpassword')?.valid &&
+        @if (signUpForm.get('confirmPassword')?.valid &&
         signUpForm.get('password')?.valid &&
-        (signUpForm.get('repeatpassword')?.dirty ||
-        signUpForm.get('repeatpassword')?.touched)) {
+        (signUpForm.get('confirmPassword')?.dirty ||
+        signUpForm.get('confirmPassword')?.touched)) {
         <mat-icon class="success-icon" style="color: green"
           >check_circle</mat-icon
         >
         }
       </div>
-      @if (signUpForm.get('repeatpassword')?.hasError('required')) {
+      @if (signUpForm.get('confirmPassword')?.hasError('required')) {
       <mat-error>Password is <strong>required</strong></mat-error>
-      } @else if (signUpForm.get('repeatpassword')?.hasError('matching')) {
+      } @else if (signUpForm.get('confirmPassword')?.hasError('matching')) {
       <mat-error>Passwords do not match</mat-error>
       }
     </mat-form-field>
@@ -117,9 +118,9 @@
         class="d-flex flex-column align-items-center justify-content-center mb-4"
       >
         <div class="d-flex align-items-center">
-          <p-inputOtp formControlName="code" [disabled]="!codeSent" />
-          @if (signUpForm.get('code')?.valid && (signUpForm.get('code')?.dirty
-          || signUpForm.get('code')?.touched)) {
+          <p-inputOtp formControlName="verification_code" [disabled]="!codeSent" />
+          @if (signUpForm.get('verification_code')?.valid && (signUpForm.get('verification_code')?.dirty
+          || signUpForm.get('verification_code')?.touched)) {
           <mat-icon
             class="success-icon"
             style="color: green; margin-left: 0.5rem"
@@ -127,15 +128,15 @@
           >
           }
         </div>
-        @if (signUpForm.get('code')?.hasError('required')) {
+        @if (signUpForm.get('verification_code')?.hasError('required')) {
         <mat-error>Verification code is <strong>required</strong></mat-error>
-        } @if (signUpForm.get('code')?.hasError('nonNumeric') && (codeSent ||
-        signUpForm.get('code')?.value != '----')) {
+        } @if (signUpForm.get('verification_code')?.hasError('nonNumeric') && (codeSent ||
+        signUpForm.get('verification_code')?.value != '----')) {
         <mat-error
           >Verification code must be a <strong>number</strong>.</mat-error
         >
-        } @if (signUpForm.get('code')?.hasError('minlength') &&
-        !signUpForm.get('code')?.hasError('nonNumeric')) {
+        } @if (signUpForm.get('verification_code')?.hasError('minlength') &&
+        !signUpForm.get('verification_code')?.hasError('nonNumeric')) {
         <mat-error
           >Verification code must have <strong>4 characters</strong>.</mat-error
         >
@@ -143,12 +144,22 @@
         <mat-error>You must verify your email.</mat-error>
         }
         <button
-          (click)="sendCode($event)"
           class="log-in-btn w-75 mt-2"
           mat-raised-button
-          [disabled]="codeBtnDisabled || !signUpForm.get('email')?.valid"
+          [disabled]="
+            codeBtnDisabled ||
+            !signUpForm.get('email')?.valid ||
+              !signUpForm.get('password')?.valid ||
+              !signUpForm.get('full_name')?.valid ||
+              !signUpForm.get('confirmPassword')?.valid
+          "
+          (click)="getCode()"
         >
-          {{ codeBtnLabel }}
+          @if (!sendingCode) {
+          <span>{{ codeBtnLabel }}</span>
+          } @else {
+          <p-progressSpinner [style]="{ width: '2rem' }" ariaLabel="loading" />
+          }
         </button>
       </div>
     </div>

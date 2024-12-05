@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { InputOtpModule } from 'primeng/inputotp';
 import { MatInputModule } from '@angular/material/input';
@@ -18,6 +18,14 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { isNumber } from '../../../validators/isNumber';
 import { passwordValidator } from '../../../validators/passwordValidator';
 import { matchValidator } from '../../../validators/passwordsMatchValidator';
+import { AuthService } from '../../../services/auth/auth.service';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { NotificationsService } from '../../../services/notifications/notifications.service';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { registerModel } from '../../../models/registerModel.interface';
+import { Location } from '@angular/common';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class MyErrorStateMatcher implements ErrorStateMatcher {
@@ -33,7 +41,6 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
     );
   }
 }
-
 @Component({
   selector: 'app-sign-up-form',
   standalone: true,
@@ -45,9 +52,12 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
     MatIconModule,
     FormsModule,
     ReactiveFormsModule,
+    ToastModule,
+    ProgressSpinnerModule,
   ],
   templateUrl: './sign-up-form.component.html',
   styleUrl: './sign-up-form.component.scss',
+  providers: [],
 })
 export class SignUpFormComponent {
   hide: boolean = true; // Estado inicial para ocultar la contraseña
@@ -55,41 +65,45 @@ export class SignUpFormComponent {
   codeBtnDisabled: boolean = false;
   codeSent: boolean = false;
   showVerifyError: boolean = false;
+  sendingCode: boolean = false;
 
-  signUpForm: FormGroup = new FormGroup(
-    {
-      fullname: new FormControl('', [
-        Validators.required,
-        Validators.minLength(2),
-      ]),
-      email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [
-        Validators.required,
-        Validators.minLength(8),
-        passwordValidator()
-      ]),
-      repeatpassword: new FormControl('', [
-        Validators.required,
-        matchValidator('password')
-      ]),
-      code: new FormControl('----', [
-        Validators.required,
-        isNumber(),
-        Validators.minLength(4),
-      ]),
-    },
-  );
+  signUpForm: FormGroup = new FormGroup({
+    email: new FormControl<string>('', [Validators.required, Validators.email]),
+    full_name: new FormControl('', [
+      Validators.required,
+      Validators.minLength(2),
+    ]),
+    password: new FormControl<string>('', [
+      Validators.required,
+      Validators.minLength(8),
+      passwordValidator(),
+    ]),
+    confirmPassword: new FormControl<string>('', [
+      Validators.required,
+      matchValidator('password'),
+    ]),
+    verification_code: new FormControl<string>('----', [
+      Validators.required,
+      isNumber(),
+      Validators.minLength(4),
+    ]),
+  });
+
+  private authServ = inject(AuthService);
+  private notificationServ = inject(NotificationsService);
+  private messageService = inject(MessageService)
+  private location = inject(Location)
 
   constructor() {
-    this.signUpForm.get('password')?.addValidators(matchValidator('repeatpassword', true));
+    this.signUpForm
+      .get('password')
+      ?.addValidators(matchValidator('repeatpassword', true));
   }
 
   matcher = new MyErrorStateMatcher();
 
-  sendCode(event: Event) {
-    event.preventDefault();
+  codeCount() {
     this.codeSent = true;
-    this.codeBtnDisabled = true;
     this.showVerifyError = !this.codeSent;
 
     // Inicializa el tiempo restante en 60 segundos
@@ -112,7 +126,44 @@ export class SignUpFormComponent {
     }, 1000);
   }
 
+
+  reloadCurrentRoute() {
+    // Vuelve a la misma ubicación (recarga de la URL)
+    this.location.go(this.location.path());
+    window.location.reload(); // Esto recarga completamente la página
+  }
+
   signUp() {
-    this.showVerifyError = !this.codeSent;
+    this.authServ
+      .registerUser(this.signUpForm.value as registerModel)
+      .subscribe({
+        next: () => {
+          this.notificationServ.success('', 'User registered succesfully!');
+          this.reloadCurrentRoute();
+        },
+        error: (error) => {
+          this.notificationServ.warn('', `${error.error.message}.`);
+        },
+      });
+  }
+
+  getCode() {
+    this.codeBtnDisabled = true;
+    this.sendingCode = true;
+    this.authServ
+      .getVerificationCode(this.signUpForm.get('email')?.value)
+      .subscribe({
+        next: () => {
+          this.codeCount();
+          this.notificationServ.success(
+            '',
+            'Verification code sent successfully'
+          );
+          this.sendingCode = false;
+        },
+        error: (error) => {
+          this.notificationServ.warn('', `${error.error.message}.`);
+        },
+      });
   }
 }
