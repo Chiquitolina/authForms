@@ -163,8 +163,12 @@
         </button>
       </div>
     </div>
-    <button class="log-in-btn w-100 mb-3" (click)="signUp()" mat-raised-button>
+    <button [disabled]="!signUpForm.valid || signingUp" class="log-in-btn w-100 mb-3" (click)="signUp()" mat-raised-button>
+      @if (!signingUp) {
       Sign up
+      } @else {
+      Signing Up...
+      }
     </button>
   </form>
 </div>

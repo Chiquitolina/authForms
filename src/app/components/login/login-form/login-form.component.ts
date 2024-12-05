@@ -17,6 +17,11 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Router } from '@angular/router';
+import { LoginResponse } from '../../../models/loginResponse.interface';
+import { NotificationsService } from '../../../services/notifications/notifications.service';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class MyErrorStateMatcher implements ErrorStateMatcher {
@@ -44,6 +49,8 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
     MatIconModule,
     FormsModule,
     ReactiveFormsModule,
+    ToastModule,
+    ProgressSpinnerModule
   ],
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.scss',
@@ -51,6 +58,7 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 export class LoginFormComponent {
   hide: boolean = true; // Estado inicial para ocultar la contraseña
   isLoading: boolean = false;
+  signingIn:boolean = false;
 
   logInForm: FormGroup = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -62,28 +70,31 @@ export class LoginFormComponent {
 
   private authServ = inject(AuthService);
   private router = inject(Router);
+  private notificationServ = inject(NotificationsService)
+  private messageService = inject(MessageService)
 
   onLogin() {
-    this.authServ
+    if (this.logInForm.valid) {
+      this.signingIn = true;
+      this.authServ
       .loginUser(
         this.logInForm.get('email')?.value,
         this.logInForm.get('password')?.value
       )
       .subscribe({
-        next: (response: any) => {
-          // Si la respuesta es exitosa, guardar el token
+        next: (response: LoginResponse) => {
+          this.notificationServ.success('', 'User registered succesfully!');
           const token = response.data.token;
-          console.log('logged')
-          console.log(response)
-          //this.authServ.setToken(token);
+          this.authServ.setToken(token);
 
-          // Redirigir a una página protegida
-         this.router.navigate(['/dashboard']);
+          this.router.navigate(['/home']);
         },
         error: (error) => {
-          console.error('Login failed', error);
+          this.notificationServ.warn('', `${error.error.message}.`);
+          this.signingIn = false;
         },
       });
+    }
   }
 
   matcher = new MyErrorStateMatcher();

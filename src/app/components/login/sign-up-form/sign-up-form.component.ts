@@ -66,6 +66,7 @@ export class SignUpFormComponent {
   codeSent: boolean = false;
   showVerifyError: boolean = false;
   sendingCode: boolean = false;
+  signingUp: boolean = false;
 
   signUpForm: FormGroup = new FormGroup({
     email: new FormControl<string>('', [Validators.required, Validators.email]),
@@ -134,6 +135,7 @@ export class SignUpFormComponent {
   }
 
   signUp() {
+    this.signingUp = true;
     this.authServ
       .registerUser(this.signUpForm.value as registerModel)
       .subscribe({
@@ -143,6 +145,8 @@ export class SignUpFormComponent {
         },
         error: (error) => {
           this.notificationServ.warn('', `${error.error.message}.`);
+          this.signingUp = false;
+          console.log(error)
         },
       });
   }
@@ -163,6 +167,8 @@ export class SignUpFormComponent {
         },
         error: (error) => {
           this.notificationServ.warn('', `${error.error.message}.`);
+          this.sendingCode = false;
+          this.codeBtnDisabled = false;
         },
       });
   }
