@@ -11,7 +11,7 @@ import { LoginResponse } from '../../models/loginResponse.interface';
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'https://auth-node-express-prisma-imdi.onrender.com';
+  private apiUrl = 'https://auth-node-express-prisma-v0mj.onrender.com';
 
   readonly #http = inject(HttpClient);
 
