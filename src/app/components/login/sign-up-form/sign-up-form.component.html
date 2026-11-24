@@ -1,173 +1,117 @@
-<div class="d-flex flex-column justify-content-center align-items-center w-100">
-  <p-toast />
-  <form [formGroup]="signUpForm" class="w-75 mt-3">
-    <mat-form-field class="w-100 mw-100">
-      <mat-label>Email</mat-label>
-      <input formControlName="email" class="mw-100" matInput />
-      <div matSuffix class="m-2 mt-4 icons-container">
-        <mat-icon>mail</mat-icon>
-        @if (signUpForm.get('email')?.valid && (signUpForm.get('email')?.dirty
-        || signUpForm.get('email')?.touched)) {
-        <mat-icon class="success-icon" style="color: green"
-          >check_circle</mat-icon
-        >
-        }
-      </div>
-      @if (signUpForm.get('email')?.hasError('email') &&
-      !signUpForm.get('email')?.hasError('required')) {
-      <mat-error>Please enter a valid email address</mat-error>
-      } @if (signUpForm.get('email')?.hasError('required')) {
-      <mat-error>Email is <strong>required</strong></mat-error>
-      }
-    </mat-form-field>
-    <mat-form-field class="w-100 mw-100">
-      <mat-label>Full Name</mat-label>
-      <input formControlName="full_name" matInput />
-      <div matSuffix class="m-2 mt-4 icons-container">
-        <mat-icon>person</mat-icon>
-        @if (signUpForm.get('full_name')?.valid &&
-        (signUpForm.get('full_name')?.dirty ||
-        signUpForm.get('full_name')?.touched)) {
-        <mat-icon class="success-icon" style="color: green"
-          >check_circle</mat-icon
-        >
-        }
-      </div>
-      @if (signUpForm.get('full_name')?.hasError('required')) {
-      <mat-error>Full name is <strong>required</strong></mat-error>
-      } @if (signUpForm.get('full_name')?.hasError('minlength')) {
-      <mat-error
-        >Full name must have at least <strong>2 characters</strong>.</mat-error
-      >
-      }
-    </mat-form-field>
-    <mat-form-field class="w-100 mw-100">
-      <mat-label>Password</mat-label>
-      <input
-        formControlName="password"
-        [type]="hide ? 'password' : 'text'"
-        matInput
-      />
-      <div matSuffix class="m-2 mt-4 icons-container">
-        <mat-icon class="icon" matSuffix (click)="hide = !hide">{{
-          hide ? "visibility_off" : "visibility"
-        }}</mat-icon>
-        @if (signUpForm.get('password')?.valid &&
-        (signUpForm.get('password')?.dirty ||
-        signUpForm.get('password')?.touched)) {
-        <mat-icon class="success-icon" style="color: green"
-          >check_circle</mat-icon
-        >
-        }
-      </div>
-      @if (signUpForm.get('password')?.hasError('required')) {
-      <mat-error>Password is <strong>required</strong></mat-error>
-      } @if (signUpForm.get('password')?.hasError('minlength')) {
-      <mat-error>
-        Password must have at least
-        <strong>8 characters</strong>.
-      </mat-error>
-      } @if (signUpForm.get('password')?.hasError('noUppercase')) {
-      <mat-error
-        >Password must include at least
-        <strong>one uppercase letter</strong>.</mat-error
-      >
-      } @if (signUpForm.get('password')?.hasError('noNumber')) {
-      <mat-error
-        >Password must include at least <strong>one number</strong>.</mat-error
-      >
-      } @if (signUpForm.get('password')?.hasError('noSpecial')) {
-      <mat-error
-        >Password must include at least
-        <strong>one special character</strong>.</mat-error
-      >
-      }
-    </mat-form-field>
-    <mat-form-field class="w-100 mw-100">
-      <mat-label>Repeat password</mat-label>
-      <input
-        formControlName="confirmPassword"
-        [type]="hide ? 'password' : 'text'"
-        matInput
-      />
-      <div matSuffix class="m-2 mt-4 icons-container">
-        <mat-icon class="icon" matSuffix (click)="hide = !hide">{{
-          hide ? "visibility_off" : "visibility"
-        }}</mat-icon>
-        @if (signUpForm.get('confirmPassword')?.valid &&
-        signUpForm.get('password')?.valid &&
-        (signUpForm.get('confirmPassword')?.dirty ||
-        signUpForm.get('confirmPassword')?.touched)) {
-        <mat-icon class="success-icon" style="color: green"
-          >check_circle</mat-icon
-        >
-        }
-      </div>
-      @if (signUpForm.get('confirmPassword')?.hasError('required')) {
-      <mat-error>Password is <strong>required</strong></mat-error>
-      } @else if (signUpForm.get('confirmPassword')?.hasError('matching')) {
-      <mat-error>Passwords do not match</mat-error>
-      }
-    </mat-form-field>
-    <div class="flex flex-column align-items-center">
-      <div class="mb-1">Authenticate Your Account</div>
-      <span class="text-color-secondary block">
-        Please enter the code sent to your email.
-      </span>
-      <div
-        class="d-flex flex-column align-items-center justify-content-center mb-4"
-      >
-        <div class="d-flex align-items-center">
-          <p-inputOtp formControlName="verification_code" [disabled]="!codeSent" />
-          @if (signUpForm.get('verification_code')?.valid && (signUpForm.get('verification_code')?.dirty
-          || signUpForm.get('verification_code')?.touched)) {
-          <mat-icon
-            class="success-icon"
-            style="color: green; margin-left: 0.5rem"
-            >check_circle</mat-icon
-          >
-          }
+<div class="auth-form-wrap">
+  <form class="auth-form" [formGroup]="signUpForm" (ngSubmit)="signUp()" novalidate>
+    <div class="fields-grid">
+      <div class="field-group">
+        <label class="field-label" for="signup-email">Email address <span>*</span></label>
+        <div class="input-shell" [class.input-invalid]="signUpForm.get('email')?.invalid && signUpForm.get('email')?.touched">
+          <span class="material-icons input-icon" aria-hidden="true">alternate_email</span>
+          <input id="signup-email" type="email" formControlName="email" autocomplete="email"
+                 placeholder="you@example.com" [attr.aria-invalid]="signUpForm.get('email')?.invalid && signUpForm.get('email')?.touched" />
         </div>
-        @if (signUpForm.get('verification_code')?.hasError('required')) {
-        <mat-error>Verification code is <strong>required</strong></mat-error>
-        } @if (signUpForm.get('verification_code')?.hasError('nonNumeric') && (codeSent ||
-        signUpForm.get('verification_code')?.value != '----')) {
-        <mat-error
-          >Verification code must be a <strong>number</strong>.</mat-error
-        >
-        } @if (signUpForm.get('verification_code')?.hasError('minlength') &&
-        !signUpForm.get('verification_code')?.hasError('nonNumeric')) {
-        <mat-error
-          >Verification code must have <strong>4 characters</strong>.</mat-error
-        >
-        } @if (showVerifyError) {
-        <mat-error>You must verify your email.</mat-error>
+        @if (signUpForm.get('email')?.touched && signUpForm.get('email')?.hasError('required')) {
+          <p class="field-error">Enter your email address.</p>
+        } @else if (signUpForm.get('email')?.touched && signUpForm.get('email')?.hasError('email')) {
+          <p class="field-error">Enter a valid email address.</p>
         }
-        <button
-          class="log-in-btn w-75 mt-2"
-          mat-raised-button
-          [disabled]="
-            codeBtnDisabled ||
-            !signUpForm.get('email')?.valid ||
-              !signUpForm.get('password')?.valid ||
-              !signUpForm.get('full_name')?.valid ||
-              !signUpForm.get('confirmPassword')?.valid
-          "
-          (click)="getCode()"
-        >
-          @if (!sendingCode) {
-          <span>{{ codeBtnLabel }}</span>
-          } @else {
-          <p-progressSpinner [style]="{ width: '2rem' }" ariaLabel="loading" />
-          }
-        </button>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="signup-name">Full name <span>*</span></label>
+        <div class="input-shell" [class.input-invalid]="signUpForm.get('full_name')?.invalid && signUpForm.get('full_name')?.touched">
+          <span class="material-icons input-icon" aria-hidden="true">person_outline</span>
+          <input id="signup-name" formControlName="full_name" autocomplete="name" placeholder="Your full name"
+                 [attr.aria-invalid]="signUpForm.get('full_name')?.invalid && signUpForm.get('full_name')?.touched" />
+        </div>
+        @if (signUpForm.get('full_name')?.touched && signUpForm.get('full_name')?.hasError('required')) {
+          <p class="field-error">Enter your full name.</p>
+        } @else if (signUpForm.get('full_name')?.touched && signUpForm.get('full_name')?.hasError('minlength')) {
+          <p class="field-error">Full name must have at least 2 characters.</p>
+        }
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="signup-password">Password <span>*</span></label>
+        <div class="input-shell" [class.input-invalid]="signUpForm.get('password')?.invalid && signUpForm.get('password')?.touched">
+          <span class="material-icons input-icon" aria-hidden="true">lock_outline</span>
+          <input id="signup-password" formControlName="password" [type]="hide ? 'password' : 'text'"
+                 autocomplete="new-password" placeholder="Create a password"
+                 [attr.aria-invalid]="signUpForm.get('password')?.invalid && signUpForm.get('password')?.touched" />
+          <button class="reveal-button" type="button" (click)="hide = !hide" [attr.aria-label]="hide ? 'Show passwords' : 'Hide passwords'">
+            <span class="material-icons" aria-hidden="true">{{ hide ? 'visibility_off' : 'visibility' }}</span>
+          </button>
+        </div>
+        @if (signUpForm.get('password')?.touched && signUpForm.get('password')?.hasError('required')) {
+          <p class="field-error">Enter a password.</p>
+        } @else if (signUpForm.get('password')?.touched && signUpForm.get('password')?.hasError('minlength')) {
+          <p class="field-error">Use at least 8 characters.</p>
+        } @else if (signUpForm.get('password')?.touched && signUpForm.get('password')?.hasError('noUppercase')) {
+          <p class="field-error">Include an uppercase letter.</p>
+        } @else if (signUpForm.get('password')?.touched && signUpForm.get('password')?.hasError('noNumber')) {
+          <p class="field-error">Include a number.</p>
+        } @else if (signUpForm.get('password')?.touched && signUpForm.get('password')?.hasError('noSpecial')) {
+          <p class="field-error">Include a special character.</p>
+        }
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="signup-confirm">Confirm password <span>*</span></label>
+        <div class="input-shell" [class.input-invalid]="signUpForm.get('confirmPassword')?.invalid && signUpForm.get('confirmPassword')?.touched">
+          <span class="material-icons input-icon" aria-hidden="true">verified_user</span>
+          <input id="signup-confirm" formControlName="confirmPassword" [type]="hide ? 'password' : 'text'"
+                 autocomplete="new-password" placeholder="Repeat your password"
+                 [attr.aria-invalid]="signUpForm.get('confirmPassword')?.invalid && signUpForm.get('confirmPassword')?.touched" />
+        </div>
+        @if (signUpForm.get('confirmPassword')?.touched && signUpForm.get('confirmPassword')?.hasError('required')) {
+          <p class="field-error">Confirm your password.</p>
+        } @else if (signUpForm.get('confirmPassword')?.touched && signUpForm.get('confirmPassword')?.hasError('matching')) {
+          <p class="field-error">Passwords do not match.</p>
+        }
       </div>
     </div>
-    <button [disabled]="!signUpForm.valid || signingUp" class="log-in-btn w-100 mb-3" (click)="signUp()" mat-raised-button>
+
+    <div class="password-hint"><span class="material-icons" aria-hidden="true">info_outline</span> Use 8+ characters, an uppercase letter, a number and a symbol.</div>
+
+    <div class="verification-panel">
+      <div class="verification-heading">
+        <span class="verification-icon" aria-hidden="true"><span class="material-icons">mark_email_read</span></span>
+        <div><strong>Verify your email</strong><span>One more step to create your account</span></div>
+        <span class="step-indicator">STEP 02</span>
+      </div>
+
+      <p class="verification-explainer">
+        @if (codeSent) { Enter the 4-digit code we sent to your email. }
+        @else { Fill in your details, then request a verification code. }
+      </p>
+
+      <div class="otp-row">
+        <p-inputOtp formControlName="verification_code" [length]="4" [disabled]="!codeSent" />
+      </div>
+
+      @if (codeSent && signUpForm.get('verification_code')?.touched && signUpForm.get('verification_code')?.hasError('nonNumeric')) {
+        <p class="field-error center-error">Use numbers only.</p>
+      } @else if (codeSent && signUpForm.get('verification_code')?.touched && signUpForm.get('verification_code')?.hasError('minlength')) {
+        <p class="field-error center-error">Enter all 4 digits.</p>
+      }
+
+      <button class="code-button" type="button" [disabled]="codeBtnDisabled || sendingCode ||
+          !signUpForm.get('email')?.valid || !signUpForm.get('password')?.valid ||
+          !signUpForm.get('full_name')?.valid || !signUpForm.get('confirmPassword')?.valid"
+          (click)="getCode()">
+        @if (!sendingCode) {
+          <span class="material-icons" aria-hidden="true">outgoing_mail</span>
+          {{ codeBtnLabel }}
+        } @else {
+          <span class="button-spinner" aria-hidden="true"></span>
+          Sending code...
+        }
+      </button>
+    </div>
+
+    <button class="primary-button" type="submit" [disabled]="!signUpForm.valid || signingUp || !codeSent">
       @if (!signingUp) {
-      Sign up
+        <span>Create account</span><span class="material-icons" aria-hidden="true">arrow_forward</span>
       } @else {
-      Signing Up...
+        <span class="button-spinner" aria-hidden="true"></span><span>Creating account...</span>
       }
     </button>
   </form>

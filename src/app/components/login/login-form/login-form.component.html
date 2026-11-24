@@ -1,69 +1,66 @@
-<div class="d-flex flex-column justify-content-center align-items-center w-100">
-  <p-toast />
-  <form [formGroup]="logInForm" class="w-75 mt-3">
-    <mat-form-field class="w-100 mw-100">
-      <mat-label>Email</mat-label>
-      <input formControlName="email" type="text" matInput />
-
-      <div matSuffix class="m-2 mt-4 icons-container">
-        <mat-icon>mail</mat-icon>
-        @if (logInForm.get('email')?.valid && (logInForm.get('email')?.dirty ||
-        logInForm.get('email')?.touched)) {
-        <mat-icon class="success-icon fade-in" style="color: green"
-          >check_circle</mat-icon
-        >
+<div class="auth-form-wrap">
+  <form class="auth-form" [formGroup]="logInForm" (ngSubmit)="onLogin()" novalidate>
+    <div class="field-group">
+      <label class="field-label" for="signin-email">Email address <span>*</span></label>
+      <div class="input-shell" [class.input-invalid]="logInForm.get('email')?.invalid && logInForm.get('email')?.touched">
+        <span class="material-icons input-icon" aria-hidden="true">alternate_email</span>
+        <input id="signin-email" type="email" formControlName="email" autocomplete="username"
+               placeholder="you@example.com" [attr.aria-invalid]="logInForm.get('email')?.invalid && logInForm.get('email')?.touched" />
+        @if (logInForm.get('email')?.valid && logInForm.get('email')?.touched) {
+          <span class="material-icons valid-icon" aria-hidden="true">check_circle</span>
         }
       </div>
-
-      @if (logInForm.get('email')?.hasError('email') &&
-      !logInForm.get('email')?.hasError('required')) {
-      <mat-error>Please enter a valid email address</mat-error>
-      } @if (logInForm.get('email')?.hasError('required')) {
-      <mat-error>Email is <strong>required</strong></mat-error>
+      @if (logInForm.get('email')?.touched && logInForm.get('email')?.hasError('required')) {
+        <p class="field-error">Enter your email address.</p>
+      } @else if (logInForm.get('email')?.touched && logInForm.get('email')?.hasError('email')) {
+        <p class="field-error">Enter a valid email address.</p>
       }
-    </mat-form-field>
-    <mat-form-field class="w-100 mw-100">
-      <mat-label class="">Password</mat-label>
-      <input
-        formControlName="password"
-        [type]="hide ? 'password' : 'text'"
-        matInput
-      />
+    </div>
 
-      <div matSuffix class="m-2 mt-4 icons-container">
-        <mat-icon class="icon" matSuffix (click)="hide = !hide">{{
-          hide ? "visibility_off" : "visibility"
-        }}</mat-icon>
-        @if (logInForm.get('password')?.valid &&
-        (logInForm.get('password')?.dirty ||
-        logInForm.get('password')?.touched)) {
-        <mat-icon class="success-icon fade-in" style="color: green"
-          >check_circle</mat-icon
-        >
-        }
+    <div class="field-group">
+      <div class="field-row">
+        <label class="field-label" for="signin-password">Password <span>*</span></label>
       </div>
-      @if (logInForm.get('password')?.hasError('required')) {
-      <mat-error>Password is <strong>required</strong></mat-error>
-      } @if (logInForm.get('password')?.hasError('minlength')) {
-      <mat-error>
-        Password should have at least
-        <strong>8 characters</strong>
-      </mat-error>
+      <div class="input-shell" [class.input-invalid]="logInForm.get('password')?.invalid && logInForm.get('password')?.touched">
+        <span class="material-icons input-icon" aria-hidden="true">lock_outline</span>
+        <input id="signin-password" formControlName="password" [type]="hide ? 'password' : 'text'"
+               autocomplete="current-password" placeholder="Enter your password"
+               [attr.aria-invalid]="logInForm.get('password')?.invalid && logInForm.get('password')?.touched" />
+        <button type="button" class="reveal-button" (click)="hide = !hide"
+                [attr.aria-label]="hide ? 'Show password' : 'Hide password'">
+          <span class="material-icons" aria-hidden="true">{{ hide ? 'visibility_off' : 'visibility' }}</span>
+        </button>
+      </div>
+      @if (logInForm.get('password')?.touched && logInForm.get('password')?.hasError('required')) {
+        <p class="field-error">Enter your password.</p>
+      } @else if (logInForm.get('password')?.touched && logInForm.get('password')?.hasError('minlength')) {
+        <p class="field-error">Password must be at least 8 characters.</p>
       }
-    </mat-form-field>
-    <button (click)="onLogin()" class="log-in-btn w-100 mt-1" mat-raised-button>
-      @if (!signingIn) { Sign in } @else {
-      <p-progressSpinner [style]="{ width: '2rem' }" ariaLabel="loading" />
+    </div>
+
+    <div class="help-line">
+      <span>Use your account credentials</span>
+      <span class="coming-soon" title="Password recovery is not available yet">Recovery coming soon</span>
+    </div>
+
+    <button class="primary-button" type="submit" [disabled]="signingIn">
+      @if (!signingIn) {
+        <span>Sign in</span>
+        <span class="material-icons" aria-hidden="true">arrow_forward</span>
+      } @else {
+        <span class="button-spinner" aria-hidden="true"></span>
+        <span>Signing in...</span>
       }
     </button>
+
+    <div class="auth-separator"><span>or continue with</span></div>
+
+    <button class="provider-button" type="button" disabled title="Google sign-in is not available yet">
+      <span class="google-g" aria-hidden="true">G</span>
+      <span>Google</span>
+      <span class="provider-soon">SOON</span>
+    </button>
+
+    <p class="form-note">New here? Select <strong>Sign up</strong> above to create an account.</p>
   </form>
-  <span>OR</span>
-  <mat-divider style="width: 50%"></mat-divider>
-  <button class="log-in-btn mt-2 mb-3 w-50" [disabled]="true" mat-raised-button>
-    Login with Google
-    <img width="20" src="/assets/google-logo.svg" alt="" />
-  </button>
-</div>
-<div class="mb-3">
-  <a href="">Forgot password?</a>
 </div>

@@ -1,16 +1,69 @@
-<div class="w-100 h-100">
-  <div class="h-100 w-100 d-flex align-items-center justify-content-center">
-    <div
-      class="col-xl-5 col-lg-5 col-md-8 col-sm-8 col-12 d-flex flex-column text-center bg-light border-0 card login-container"
-    >
-      <mat-tab-group class="w-100 bg-light">
-        <mat-tab label="Sign in">
-          <app-login-form></app-login-form>
-        </mat-tab>
-        <mat-tab label="Sign up">
-          <app-sign-up-form></app-sign-up-form>
-        </mat-tab>
+<section class="auth-page">
+  <div class="auth-backdrop" aria-hidden="true"></div>
+  <p-toast />
+
+  <div class="auth-shell">
+    <aside class="brand-panel" aria-label="About AuthFlow">
+      <div class="brand-lockup">
+        <span class="brand-symbol" aria-hidden="true">
+          <span class="material-icons">fingerprint</span>
+        </span>
+        <span class="brand-name">auth<span>flow</span><span class="brand-dot">.</span></span>
+      </div>
+
+      <div class="brand-content">
+        <div class="brand-eyebrow"><span class="eyebrow-line"></span> A BETTER WAY IN</div>
+        <h2>Your next step<br />starts <em>here.</em></h2>
+        <p class="brand-description">
+          One simple place to access your account, verify your email, and keep moving.
+        </p>
+
+        <div class="flow-preview" aria-label="Account access steps">
+          <div class="flow-item">
+            <span class="flow-number">01</span>
+            <div class="flow-text"><strong>Enter your details</strong><small>Your account, your credentials</small></div>
+            <span class="material-icons" aria-hidden="true">arrow_forward</span>
+          </div>
+          <div class="flow-item">
+            <span class="flow-number">02</span>
+            <div class="flow-text"><strong>Verify your email</strong><small>An extra step when you sign up</small></div>
+            <span class="material-icons" aria-hidden="true">arrow_forward</span>
+          </div>
+          <div class="flow-item">
+            <span class="flow-number">03</span>
+            <div class="flow-text"><strong>You're all set</strong><small>Continue to your account</small></div>
+            <span class="material-icons" aria-hidden="true">check</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-footer">
+        <span class="status-pulse" aria-hidden="true"></span>
+        AUTHENTICATION EXPERIENCE
+        <span class="footer-separator"></span>
+        v1.0
+      </div>
+    </aside>
+
+    <section class="form-panel" aria-label="Account access">
+      <div class="panel-top">
+        <span class="panel-kicker">WELCOME TO AUTHFLOW</span>
+        <span class="panel-mark"><span class="material-icons" aria-hidden="true">lock_outline</span> ACCOUNT ACCESS</span>
+      </div>
+
+      <div class="panel-heading">
+        <h1>Good to see you.</h1>
+        <p>Sign in to your account or create a new one.</p>
+      </div>
+
+      <mat-tab-group class="auth-tabs" animationDuration="220ms" mat-stretch-tabs="true">
+        <mat-tab label="Sign in"><app-login-form></app-login-form></mat-tab>
+        <mat-tab label="Sign up"><app-sign-up-form></app-sign-up-form></mat-tab>
       </mat-tab-group>
-    </div>
+
+      <p class="panel-footnote">A streamlined authentication demo built with Angular.</p>
+    </section>
   </div>
-</div>
+
+  <div class="bottom-signature">AUTHFLOW <span aria-hidden="true">/</span> IDENTITY EXPERIENCE</div>
+</section>

@@ -1,0 +1,17 @@
+@import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "primeng/resources/primeng.css";
+
+:root {
+  color-scheme: dark;
+  font-family: 'Inter', 'Lato', Arial, sans-serif;
+}
+
+html, body { min-height: 100%; margin: 0; }
+body { background: #0b0e13; color: #eef2fb; font-family: 'Inter', 'Lato', Arial, sans-serif; }
+* { box-sizing: border-box; }
+button, input { font: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+::selection { background: rgba(135, 170, 255, .35); color: #fff; }
+
+/* Toast colors compatible with the dark surface. */
+.p-toast .p-toast-message { border-radius: 10px; box-shadow: 0 15px 45px rgba(0,0,0,.25); }
